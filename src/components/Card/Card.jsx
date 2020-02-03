@@ -1,14 +1,17 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { connect } from 'react-redux';
+import * as actionTypes from '../../store/actions/actionTypes';
 import { CardsContext } from '../../context/cardsContext';
+
 
 import './Card.css';
 
-const Card = ({ number }) => {
-  const { status, onCardClick } = useContext(CardsContext);
-  const [flipped, setFlipped] = useState(status === 'playing');
+const Card = ({ status, number }) => {
+  const [flipped, setFlipped] = useState(status === actionTypes.PLAYING_STATUS);
+  const { onCardClick } = useContext(CardsContext);
 
   useEffect(() => {
-    setFlipped(status === 'playing');
+    setFlipped(status === actionTypes.PLAYING_STATUS);
   }, [status]);
 
   const flipCard = () => {
@@ -17,7 +20,7 @@ const Card = ({ number }) => {
   }
 
   return(
-    <section className={`card ${flipped && 'flipped'}`} onClick={status === 'playing' ? flipCard : null}>
+    <section className={`card ${flipped && 'flipped'}`} onClick={status === actionTypes.PLAYING_STATUS ? flipCard : null}>
       <section className="front">
         <div className="card__content">
           <h2 className="card__title">{number}</h2>
@@ -29,4 +32,8 @@ const Card = ({ number }) => {
   );
 };
 
-export default Card;
+const mapStateToProps = state => ({
+  status: state.status.status
+});
+
+export default connect(mapStateToProps)(Card);

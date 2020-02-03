@@ -1,18 +1,29 @@
-import React, {useState} from 'react';
+import React from 'react';
 import CardsList from './components/CardsList/CardsList';
 import { CardsContext } from './context/cardsContext';
+
+//Material UI Modal
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import { makeStyles } from '@material-ui/core/styles';
 
+//Redux
+import { connect } from 'react-redux';
+import * as actions from './store/actions/';
+import * as actionTypes from './store/actions/actionTypes';
+
 import './App.css';
 
-const App = () => {
-  const [cards, setCards] = useState([]);
-  const [result, setResult] = useState([]);
-  const [status, setStatus] = useState('start');
-
+const App = ({
+  cards,
+  result,
+  status,
+  fetchCards,
+  setResult,
+  setCards,
+  setStatus
+}) => {
   const initializeArray = length => {
     const array = [];
     while(array.length < length) {
@@ -20,24 +31,24 @@ const App = () => {
       if (array.indexOf(item) === -1) array.push(item);
     }
 
-    setStatus('pending');
-    return array;
+    setStatus(actionTypes.PENDING_STATUS);
+    setCards(array);
   }
 
   const onPlayClick = () => {
-    const sortedCards = [...cards];
-    sortedCards.sort((a, b) => a - b);
-    setResult(sortedCards);
-    setStatus('playing');
+    const newArray = [...cards];
+    newArray.sort((a, b) => a - b)
+    setResult(newArray);
+    setStatus(actionTypes.PLAYING_STATUS);
   }
 
   const onCardClick = number => {
     const resultCopy = [...result];
     if (number !== resultCopy.shift()) {
-      setStatus('loose');
+      setStatus(actionTypes.LOOSE_STATUS);
       handleOpen();
     } else if (resultCopy.length === 0) {
-      setStatus('win');
+      setStatus(actionTypes.WIN_STATUS);
       handleOpen();
     } else {
       setResult(resultCopy);
@@ -45,7 +56,7 @@ const App = () => {
   }
 
   const onReplayed = () => {
-    setStatus('start');
+    setStatus(actionTypes.START_STATUS);
   }
 
   const useStyles = makeStyles(theme => ({
@@ -72,24 +83,25 @@ const App = () => {
   const handleClose = () => {
     setOpen(false);
   };
+
   return (
-    <CardsContext.Provider value={{ cards, result, status, onCardClick }}>
+    <CardsContext.Provider value={{ onCardClick }}>
       <div className="App">
         {
-          status === 'start' &&
+          status === actionTypes.START_STATUS &&
           <>
             <h2 className="App__title">Choose cards amount:</h2>
-            <button className="btn" onClick={() => setCards(initializeArray(4))}>4</button>
-            <button className="btn" onClick={() => setCards(initializeArray(8))}>8</button>
-            <button className="btn" onClick={() => setCards(initializeArray(12))}>12</button>
+            <button className="btn" onClick={() => initializeArray(4)}>4</button>
+            <button className="btn" onClick={() => initializeArray(8)}>8</button>
+            <button className="btn" onClick={() => initializeArray(12)}>12</button>
           </>
         }
         { 
-          cards.length !== 0 && status !== 'start' &&
+          cards.length !== 0 && status !== actionTypes.START_STATUS &&
           <CardsList cards={cards} onPlayClick={onPlayClick} />
         }
         {
-          (status === 'win' || status === 'loose') &&
+          (status === actionTypes.WIN_STATUS || status === actionTypes.LOOSE_STATUS) &&
           <>
             <Modal
               aria-labelledby="transition-modal-title"
@@ -105,7 +117,7 @@ const App = () => {
             >
               <Fade in={open}>
                 <div className={classes.paper}>
-                  <h2>You {status}!</h2>
+                  <h2>You {status === actionTypes.WIN_STATUS ? 'Win' : 'Loose'}!</h2>
                   <button className="btn" onClick={onReplayed}>Play again</button>
                 </div>
               </Fade>
@@ -117,4 +129,17 @@ const App = () => {
   );
 }
 
-export default App;
+const mapStateToProps = state => ({
+  cards: state.cards.cards,
+  result: state.cards.result,
+  status: state.status.status
+});
+
+const mapDispatchToProps = dispatch => ({
+  fetchCards: () => dispatch(actions.fetchCards()),
+  setResult: result => dispatch(actions.setResult(result)),
+  setCards: cards => dispatch(actions.setCards(cards)),
+  setStatus: status => dispatch(actions.setStatus(status))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
