@@ -12,3 +12,5 @@ export const PLAYING_STATUS = 'PLAYING_STATUS';
 export const WIN_STATUS = 'WIN_STATUS';
 export const LOOSE_STATUS = 'LOOSE_STATUS';
 export const SET_STATUS = 'SET_STATUS';
+
+export const ADD_HISTORY = 'ADD_HISTORY';

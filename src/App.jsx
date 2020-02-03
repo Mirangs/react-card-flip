@@ -1,6 +1,7 @@
 import React from 'react';
 import CardsList from './components/CardsList/CardsList';
 import { CardsContext } from './context/cardsContext';
+import History from './components/History/History';
 
 //Material UI Modal
 import Modal from '@material-ui/core/Modal';
@@ -22,7 +23,8 @@ const App = ({
   fetchCards,
   setResult,
   setCards,
-  setStatus
+  setStatus,
+  addEntry
 }) => {
   const initializeArray = length => {
     const array = [];
@@ -46,9 +48,11 @@ const App = ({
     const resultCopy = [...result];
     if (number !== resultCopy.shift()) {
       setStatus(actionTypes.LOOSE_STATUS);
+      addEntry(actionTypes.LOOSE_STATUS, cards.length);
       handleOpen();
     } else if (resultCopy.length === 0) {
       setStatus(actionTypes.WIN_STATUS);
+      addEntry(actionTypes.WIN_STATUS, cards.length);
       handleOpen();
     } else {
       setResult(resultCopy);
@@ -86,45 +90,48 @@ const App = ({
 
   return (
     <CardsContext.Provider value={{ onCardClick }}>
-      <div className="App">
-        {
-          status === actionTypes.START_STATUS &&
-          <>
-            <h2 className="App__title">Choose cards amount:</h2>
-            <button className="btn" onClick={() => initializeArray(4)}>4</button>
-            <button className="btn" onClick={() => initializeArray(8)}>8</button>
-            <button className="btn" onClick={() => initializeArray(12)}>12</button>
-          </>
-        }
-        { 
-          cards.length !== 0 && status !== actionTypes.START_STATUS &&
-          <CardsList cards={cards} onPlayClick={onPlayClick} />
-        }
-        {
-          (status === actionTypes.WIN_STATUS || status === actionTypes.LOOSE_STATUS) &&
-          <>
-            <Modal
-              aria-labelledby="transition-modal-title"
-              aria-describedby="transition-modal-description"
-              className={classes.modal}
-              open={open}
-              onClose={handleClose}
-              closeAfterTransition
-              BackdropComponent={Backdrop}
-              BackdropProps={{
-                timeout: 500,
-              }}
-            >
-              <Fade in={open}>
-                <div className={classes.paper}>
-                  <h2>You {status === actionTypes.WIN_STATUS ? 'Win' : 'Loose'}!</h2>
-                  <button className="btn" onClick={onReplayed}>Play again</button>
-                </div>
-              </Fade>
-            </Modal>
-          </>
-        }
-      </div>
+      <main className="page-content">
+        <div className="App">
+          {
+            status === actionTypes.START_STATUS &&
+            <>
+              <h2 className="App__title">Choose cards amount:</h2>
+              <button className="btn" onClick={() => initializeArray(4)}>4</button>
+              <button className="btn" onClick={() => initializeArray(8)}>8</button>
+              <button className="btn" onClick={() => initializeArray(12)}>12</button>
+            </>
+          }
+          { 
+            cards.length !== 0 && status !== actionTypes.START_STATUS &&
+            <CardsList cards={cards} onPlayClick={onPlayClick} />
+          }
+          {
+            (status === actionTypes.WIN_STATUS || status === actionTypes.LOOSE_STATUS) &&
+            <>
+              <Modal
+                aria-labelledby="transition-modal-title"
+                aria-describedby="transition-modal-description"
+                className={classes.modal}
+                open={open}
+                onClose={handleClose}
+                closeAfterTransition
+                BackdropComponent={Backdrop}
+                BackdropProps={{
+                  timeout: 500,
+                }}
+              >
+                <Fade in={open}>
+                  <div className={classes.paper}>
+                    <h2>You {status === actionTypes.WIN_STATUS ? 'Win' : 'Loose'}!</h2>
+                    <button className="btn" onClick={onReplayed}>Play again</button>
+                  </div>
+                </Fade>
+              </Modal>
+            </>
+          }
+        </div>
+        <History /> 
+      </main>
     </CardsContext.Provider>
   );
 }
@@ -139,7 +146,8 @@ const mapDispatchToProps = dispatch => ({
   fetchCards: () => dispatch(actions.fetchCards()),
   setResult: result => dispatch(actions.setResult(result)),
   setCards: cards => dispatch(actions.setCards(cards)),
-  setStatus: status => dispatch(actions.setStatus(status))
+  setStatus: status => dispatch(actions.setStatus(status)),
+  addEntry: (status, cardsAmount) => dispatch(actions.addEntry(status, cardsAmount))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
