@@ -22,24 +22,17 @@ const App = ({
   status,
   fetchCards,
   setResult,
-  setCards,
   setStatus,
   addEntry
 }) => {
-  const initializeArray = length => {
-    const array = [];
-    while(array.length < length) {
-      const item = Math.floor(Math.random() * 100) + 1;
-      if (array.indexOf(item) === -1) array.push(item);
-    }
-
+  const initializeCards = length => {
+    fetchCards(length);
     setStatus(actionTypes.PENDING_STATUS);
-    setCards(array);
   }
 
   const onPlayClick = () => {
     const newArray = [...cards];
-    newArray.sort((a, b) => a - b)
+    newArray.sort((a, b) => a - b);
     setResult(newArray);
     setStatus(actionTypes.PLAYING_STATUS);
   }
@@ -96,9 +89,9 @@ const App = ({
             status === actionTypes.START_STATUS &&
             <>
               <h2 className="App__title">Choose cards amount:</h2>
-              <button className="btn" onClick={() => initializeArray(4)}>4</button>
-              <button className="btn" onClick={() => initializeArray(8)}>8</button>
-              <button className="btn" onClick={() => initializeArray(12)}>12</button>
+              <button className="btn" onClick={() => initializeCards(4)}>4</button>
+              <button className="btn" onClick={() => initializeCards(8)}>8</button>
+              <button className="btn" onClick={() => initializeCards(12)}>12</button>
             </>
           }
           { 
@@ -143,9 +136,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  fetchCards: () => dispatch(actions.fetchCards()),
+  fetchCards: length => dispatch(actions.fetchCards(length)),
   setResult: result => dispatch(actions.setResult(result)),
-  setCards: cards => dispatch(actions.setCards(cards)),
   setStatus: status => dispatch(actions.setStatus(status)),
   addEntry: (status, cardsAmount) => dispatch(actions.addEntry(status, cardsAmount))
 });

@@ -20,11 +20,11 @@ export const fetchCardsFailed = () => {
   }
 }
 
-export const fetchCards = () => {
+export const fetchCards = length => {
   return dispatch => {
-    fetch('https://jsonplaceholder.typicode.com/todos/1')
+    fetch('https://card-flip-backend.herokuapp.com/api/generate', { method: 'POST', body: JSON.stringify({ length }), headers: { 'Content-Type': 'application/json' }})
       .then(res => res.json())
-      .then(data => setCards(data))
+      .then(data => dispatch(setCards(data.array)))
       .catch(err => dispatch(fetchCardsFailed()));
   }
 }
