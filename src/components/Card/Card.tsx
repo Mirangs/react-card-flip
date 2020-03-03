@@ -1,12 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { connect } from 'react-redux';
 import * as actionTypes from '../../store/actions/actionTypes';
-import { CardsContext } from '../../context/cardsContext';
-
+import { CardsContext, noop } from '../../context/cardsContext';
+import { GameStatusType } from '../../store/types';
 
 import './Card.css';
 
-const Card = ({ status, number }) => {
+type Props = {
+  status: GameStatusType,
+  number: number
+}
+
+const Card: React.FC<Props> = ({ status, number }) => {
   const [flipped, setFlipped] = useState(status === actionTypes.PLAYING_STATUS);
   const { onCardClick } = useContext(CardsContext);
 
@@ -20,7 +25,7 @@ const Card = ({ status, number }) => {
   }
 
   return(
-    <section className={`card ${flipped && 'flipped'}`} onClick={status === actionTypes.PLAYING_STATUS ? flipCard : null}>
+    <section className={`card ${flipped && 'flipped'}`} onClick={status === actionTypes.PLAYING_STATUS ? flipCard : noop}>
       <section className="front">
         <div className="card__content">
           <h2 className="card__title">{number}</h2>
@@ -32,7 +37,7 @@ const Card = ({ status, number }) => {
   );
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state: any) => ({
   status: state.status.status
 });
 

@@ -1,10 +1,15 @@
 import * as actionTypes from '../actions/actionTypes';
+import { HistoryActionType, HistoryType } from '../types';
 
-const initialState = {
+type InitialStateType = {
+  history: HistoryType
+}
+
+const initialState: InitialStateType = {
   history: []
 }
 
-const addEntry = (state, action) => {
+const addEntry = (state: typeof initialState, action: HistoryActionType): InitialStateType => {
   const history = [...state.history];
   const item = {
     date: new Date(Date.now()).toLocaleString(),
@@ -19,7 +24,7 @@ const addEntry = (state, action) => {
   }
 }
 
-const reducer = (state = initialState, action) => {
+const reducer = (state = initialState, action: HistoryActionType): InitialStateType => {
   switch(action.type) {
     case actionTypes.ADD_HISTORY:     return addEntry(state, action);
     default:                          return state;

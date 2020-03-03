@@ -1,7 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { HistoryType } from '../../store/types';
 
-const History = ({ history }) => {
+type Props = {
+  history: HistoryType
+}
+
+const History: React.FC<Props> = ({ history }) => {
   return(
     <section className="history">
       <h2 style={{textAlign: 'center'}}>History</h2>
@@ -16,7 +21,7 @@ const History = ({ history }) => {
   );
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state: any) => ({ //TODO: state typing
   history: state.history.history
 });
 

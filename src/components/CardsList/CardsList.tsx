@@ -1,10 +1,15 @@
 import React from 'react';
 import Card from '../Card/Card';
+import { CardsType } from '../../store/types';
 
 import './CardsList.css';
 
-const CardsList = ({ cards, onPlayClick }) => {
+type Props = {
+  cards: CardsType,
+  onPlayClick: () => void
+}
 
+const CardsList: React.FC<Props> = ({ cards, onPlayClick }) => {
   return(
     <>
     <h2>Pick cards in ascending order</h2>
