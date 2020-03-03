@@ -13,21 +13,21 @@ const initialState: InitialStateType = {
   err: false
 }
 
-const setCards = (state: InitialStateType, action: SetCardsActionType) => {
+const setCards = (state: InitialStateType, action: SetCardsActionType): InitialStateType => {
   return {
     ...state,
     cards: action.cards
   }
 }
 
-const setResult = (state: InitialStateType, action: SetResultActionType) => {
+const setResult = (state: InitialStateType, action: SetResultActionType): InitialStateType => {
   return {
     ...state,
     result: action.result
   }
 }
 
-const fetchCardsFailed = (state: InitialStateType, action: FetchCardsFailActionType) => {
+const fetchCardsFailed = (state: InitialStateType, action: FetchCardsFailActionType): InitialStateType => {
   return {
     ...state,
     err: true
